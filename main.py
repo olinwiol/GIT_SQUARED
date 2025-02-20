@@ -102,21 +102,25 @@ def initialize_subprocess(git_token, username, commit_message, repository, first
         subprocess.run(["git", "push", "-u", "origin", "master"])
         print("Files pushed.")
 
-        # Step 3: Remove files
+        # Step 3: Wait for 5 minutes before removing files
+        print("Files will remain for 5 minutes...")
+        time.sleep(300)  # 300 seconds = 5 minutes
+
+        # Step 4: Remove files
         print("Removing files...")
         remove_language_files(languages)
         print("Files removed.")
 
-        # Step 4: Commit and push file removal
+        # Step 5: Commit and push file removal
         print("Committing file removal...")
         subprocess.run(["git", "add", "."])
         subprocess.run(["git", "commit", "-m", f"Removed files: {commit_message}"])
         subprocess.run(["git", "push", "origin", "master"])
         print("File removal pushed.")
 
-        # Wait 2 minutes before repeating
-        print("Waiting for 2 minutes before repeating...")
-        time.sleep(300)  # 120 seconds = 2 minutes
+        # Step 6: Wait for another 5 minutes before restarting the loop
+        print("Waiting for 5 minutes before regenerating files...")
+        time.sleep(300)  # 300 seconds = 5 minutes
 
 
 if __name__ == "__main__":
