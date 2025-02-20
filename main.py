@@ -16,10 +16,32 @@ def generate_folder(language):
     os.mkdir(language)
 
 
+# Function to generate files with appropriate code for each language
 def generate_file(language):
     filename = os.path.join(language, "main." + language)
+    code_snippets = {
+        "c": "#include <stdio.h>\nint main() { printf(\"Hello, C!\\n\"); return 0; }",
+        "cs": "using System;\nclass Program { static void Main() { Console.WriteLine(\"Hello, C#!\"); } }",
+        "py": "print(\"Hello, Python!\")",
+        "java": "public class Main { public static void main(String[] args) { System.out.println(\"Hello, Java!\"); } }",
+        "cpp": "#include <iostream>\nint main() { std::cout << \"Hello, C++!\" << std::endl; return 0; }",
+        "js": "console.log(\"Hello, JavaScript!\");",
+        "php": "<?php\necho \"Hello, PHP!\";\n?>",
+        "go": "package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"Hello, Go!\") }",
+        "rb": "puts \"Hello, Ruby!\"",
+        "swift": "print(\"Hello, Swift!\")",
+        "kt": "fun main() { println(\"Hello, Kotlin!\") }",
+        "r": "print(\"Hello, R!\")",
+        "sql": "-- SQL Example\nSELECT 'Hello, SQL';",
+        "pl": "print \"Hello, Perl!\\n\";",
+        "m": "disp('Hello, MATLAB!');",
+        "lua": "print(\"Hello, Lua!\")",
+        "hs": "main = putStrLn \"Hello, Haskell!\""
+    }
+    # Write appropriate code to the file
     with open(filename, "w") as f:
-        f.write(f"// This is a {language} file.\n")
+        f.write(code_snippets.get(language, f"// No code snippet available for {language}"))
+    print(f"Generated file: {filename}")
 
 
 def remove_file(language):
@@ -92,13 +114,14 @@ def initialize_subprocess(git_token, username, commit_message, repository, first
         subprocess.run(["git", "push", "origin", "master"])
         print("File removal pushed.")
 
-        # Wait 5 minutes before repeating
-        print("Waiting for 5 minutes before repeating...")
-        time.sleep(30)  # 300 seconds = 5 minutes
+        # Wait 2 minutes before repeating
+        print("Waiting for 2 minutes before repeating...")
+        time.sleep(300)  # 120 seconds = 2 minutes
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Automate file creation, commit, push, and removal.")
+    parser.add_argument('--repo_url', required=False, help="The URL of the repository.")
     parser.add_argument('--git_token', required=False, help="Your GIT token for authentication.")
     parser.add_argument('--username', required=False, help="Your GIT username.")
     parser.add_argument('--commit_message', required=False, help="Custom commit message.")
@@ -107,10 +130,11 @@ if __name__ == "__main__":
     parser.add_help = True
     args = parser.parse_args()
 
-    git_token = args.git_token if args.git_token else "YOURGITTOKEN"
-    username = args.username if args.username else "YOURUSERNAME"
+    repo_url = args.repo_url if args.repo_url else "https://github.com/olinwiol/automation.git"
+    git_token = args.git_token if args.git_token else "bb"
+    username = args.username if args.username else "olinwiol"
     commit_message = args.commit_message if args.commit_message else "Automated commit message"
-    repository = args.repository if args.repository else "REPOSITORYNAME"
+    repository = args.repository if args.repository else "automation"
     first_run = args.first_run if args.first_run else False
 
     initialize_subprocess(git_token, username, commit_message, repository, first_run)
