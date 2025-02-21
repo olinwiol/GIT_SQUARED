@@ -77,7 +77,7 @@ def get_languages():
     return languages
 
 
-def initialize_subprocess(git_token, username, commit_message, repository, first_run):
+def initialize_subprocess(repo_url, git_token, username, email, commit_message, repository, first_run):
     languages = get_languages()
     os.chdir(os.path.dirname(__file__) + "/" + repository)
 
@@ -86,7 +86,7 @@ def initialize_subprocess(git_token, username, commit_message, repository, first
         repo_url = f"https://{username}:{git_token}@github.com/{username}/{repository}.git"
         subprocess.run(["git", "init"])
         subprocess.run(["git", "config", "user.name", username])
-        subprocess.run(["git", "config", "user.email", f"{username}@gmail.com"])
+        subprocess.run(["git", "config", "user.email", email])
         subprocess.run(["git", "remote", "add", "origin", repo_url])
 
     while True:
@@ -102,9 +102,9 @@ def initialize_subprocess(git_token, username, commit_message, repository, first
         subprocess.run(["git", "push", "-u", "origin", "master"])
         print("Files pushed.")
 
-        # Step 3: Wait for 5 minutes before removing files
-        print("Files will remain for 5 minutes...")
-        time.sleep(300)  # 300 seconds = 5 minutes
+        # Step 3: Wait for 10 minutes before removing files
+        print("Files will remain for 10 minutes...")
+        time.sleep(6)  # 600 seconds = 10 minutes
 
         # Step 4: Remove files
         print("Removing files...")
@@ -118,27 +118,33 @@ def initialize_subprocess(git_token, username, commit_message, repository, first
         subprocess.run(["git", "push", "origin", "master"])
         print("File removal pushed.")
 
-        # Step 6: Wait for another 5 minutes before restarting the loop
-        print("Waiting for 5 minutes before regenerating files...")
-        time.sleep(300)  # 300 seconds = 5 minutes
-
+def from_file_get(param, path="mytoken.txt"):
+    with open(path, "r") as f:
+        for line in f:
+            if "=" in line:
+                key, value = line.split("=", 1)
+                if key.strip() == param:
+                    return value.strip()
+    return None
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Automate file creation, commit, push, and removal.")
     parser.add_argument('--repo_url', required=False, help="The URL of the repository.")
     parser.add_argument('--git_token', required=False, help="Your GIT token for authentication.")
     parser.add_argument('--username', required=False, help="Your GIT username.")
+    parser.add_argument('--email', required=False, help="Your GIT email.")
     parser.add_argument('--commit_message', required=False, help="Custom commit message.")
     parser.add_argument('--repository', required=False, help="The repository folder name.")
     parser.add_argument('--first_run', type=bool, required=False, help="Set to True if running for the first time.")
     parser.add_help = True
     args = parser.parse_args()
 
-    repo_url = args.repo_url if args.repo_url else "https://github.com/olinwiol/automation.git"
-    git_token = args.git_token if args.git_token else "bb"
-    username = args.username if args.username else "olinwiol"
-    commit_message = args.commit_message if args.commit_message else "Automated commit message"
-    repository = args.repository if args.repository else "automation"
+    repo_url = args.repo_url if args.repo_url else from_file_get(repo_url);
+    git_token = args.git_token if args.git_token else from_file_get(git_token);
+    username = args.username if args.username else from_file_get(username);
+    email = args.email if args.email else from_file_get(email);
+    commit_message = args.commit_message if args.commit_message else from_file_get(commit_message);
+    repository = args.repository if args.repository else from_file_get(repository);
     first_run = args.first_run if args.first_run else False
 
-    initialize_subprocess(git_token, username, commit_message, repository, first_run)
+    initialize_subprocess(repo_url, git_token, username, email, commit_message, repository, first_run)
