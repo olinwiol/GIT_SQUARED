@@ -104,7 +104,7 @@ def initialize_subprocess(repo_url, git_token, username, email, commit_message, 
 
         # Step 3: Wait for 10 minutes before removing files
         print("Files will remain for 10 minutes...")
-        time.sleep(6)  # 600 seconds = 10 minutes
+        time.sleep(600)  # 600 seconds = 10 minutes
 
         # Step 4: Remove files
         print("Removing files...")
@@ -139,12 +139,12 @@ if __name__ == "__main__":
     parser.add_help = True
     args = parser.parse_args()
 
-    repo_url = args.repo_url if args.repo_url else from_file_get(repo_url);
-    git_token = args.git_token if args.git_token else from_file_get(git_token);
-    username = args.username if args.username else from_file_get(username);
-    email = args.email if args.email else from_file_get(email);
-    commit_message = args.commit_message if args.commit_message else from_file_get(commit_message);
-    repository = args.repository if args.repository else from_file_get(repository);
+    repo_url = args.repo_url if args.repo_url else from_file_get("repo_url");
+    git_token = args.git_token if args.git_token else from_file_get("git_token");
+    username = args.username if args.username else from_file_get("username");
+    email = args.email if args.email else from_file_get("email");
+    commit_message = args.commit_message if args.commit_message else from_file_get("commit_message");
+    repository = args.repository if args.repository else from_file_get("repository");
     first_run = args.first_run if args.first_run else False
 
     initialize_subprocess(repo_url, git_token, username, email, commit_message, repository, first_run)
